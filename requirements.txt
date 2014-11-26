@@ -1,3 +1,4 @@
 Django==1.7.1
 django-facebook==6.0.2
 mongoengine==0.8.0
+facebook-sdk
