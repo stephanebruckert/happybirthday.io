@@ -5,6 +5,15 @@
     <title></title>
 </head>
 <body>
-    hello
+    <h1>Happy Birthday</h1>
+{% for key, value in diff.items %}
+    <h2>{{key}}</h2>
+    {% with new=value.new|length same=value.same|length lost=value.lost|length %}
+    <h3>{{new|add:same}}</h3>
+    <p>new: {{new}}</p>
+    <p>same: {{same}}</p>
+    <p>lost: {{lost}}</p>
+    {% endwith %}
+{% endfor %}
 </body>
 </html>
