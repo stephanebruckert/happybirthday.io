@@ -2,11 +2,88 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
-    <link rel="stylesheet/less" type="text/css" media="all" href="{{STATIC_URL}}less/theme.less" />
-    <script src="{{STATIC_URL}}js/less.min.js"></script>
+    <title>HBD</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div id="header" class="transparent static">
+          <div class="container12">
+            <h1>
+              <a href="https://positionly.com/" title="SEO Software - track search engine rankings, analyze competitors and check backlinks with simplicity">SEO Software - track search engine rankings, analyze competitors and check backlinks with simplicity</a>
+            </h1>
+
+              <div id="navigation">
+                <ul class="sideNav">
+                  <li class="mobileOn">
+                    <a class="button account" href="#menu">
+                      <span>Menu</span>
+                    </a>
+                  </li>
+                    <li class="mobileOff">
+                      <a class="button account" title="Sign up" href="https://positionly.com/signup">
+                        Sign up
+                      </a>
+                    </li>
+                  <li id="lang-menu" class="langItem">
+  <a class="button languages" href="#">
+    <i class="flag flag_en"></i>
+  </a> <!-- /button -->
+
+  <div class="langCont hidden">
+    <ul class="langNav">
+        <li>
+          <a href="/beta">
+            <i class="flag flag_en"></i> English
+          </a>
+        </li>
+        <li>
+          <a href="/es/beta">
+            <i class="flag flag_es"></i> Español
+          </a>
+        </li>
+        <li>
+          <a href="/pl/beta">
+            <i class="flag flag_pl"></i> Polski
+          </a>
+        </li>
+        <li>
+          <a href="/ru/beta">
+            <i class="flag flag_ru"></i> Pусский
+          </a>
+        </li>
+        <li>
+          <a href="/tr/beta">
+            <i class="flag flag_tr"></i> Türkçe
+          </a>
+        </li>
+    </ul> <!-- /langNav -->
+  </div> <!-- /langCont -->
+</li> <!-- /lang-menu -->
+
+                </ul> <!-- /sideNav -->
+
+                <div class="mainNav noHeight">
+                  <ul class="navigation">
+                    <li class=""><a href="https://positionly.com/" title="Home">Home</a></li>
+                    <li class=""><a href="https://positionly.com/features" title="Features">Features</a></li>
+                    <li class=""><a href="https://positionly.com/plans" title="Plans &amp; Pricing">Plans &amp; Pricing</a></li>
+                    <li><a href="http://positionly.com/blog" target="_blank" title="Blog">Blog</a></li>
+                    <li><a href="https://positionly.com/learning" title="Learning">Learning</a></li>
+                    <!-- <li><a href="https://addons.positionly.com/" title="Add-ons">Add-ons</a></li> -->
+                      <li class="signIn"><a href="https://positionly.com/signin" title="Log in">Log in</a></li>
+                      <li class="mobileOn"><a href="https://positionly.com/signup" title="Sign up">Sign up</a></li>
+                  </ul> <!-- /navigation -->
+                </div> <!-- /mainNav -->
+              </div> <!-- /navigation -->
+            <a href="/" title="Go to Positionly.com" id="go-back-btn" class="goBack">Go to Positionly</a>
+          </div> <!-- /container12 -->
+        </div>
     <h1>Happy Birthday</h1>
 {% for key, value in diff.items %}
     <h2>{{key}}</h2>
