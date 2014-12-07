@@ -1,5 +1,5 @@
 $( document ).ready(function() {
-    var data = {
+    var dataYearlyBirthdays = {
         labels: years_charts_labels,
         datasets: [
             {
@@ -31,9 +31,40 @@ $( document ).ready(function() {
                 pointHighlightFill: "#fff",
                 pointHighlightStroke: "rgba(242,87,87,1)",
                 data: years_charts_lost
+            },
+            {
+                label: "All",
+                fillColor: "rgba(122,87,87,0.2)",
+                strokeColor: "rgba(122,87,87,1)",
+                pointColor: "rgba(122,87,87,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(122,87,87,1)",
+                data: years_charts_all
             }
         ]
     };
+
+    var dataWordsUsed = [
+        {
+            value: 300,
+            color:"#F7464A",
+            highlight: "#FF5A5E",
+            label: "Red"
+        },
+        {
+            value: 50,
+            color: "#46BFBD",
+            highlight: "#5AD3D1",
+            label: "Green"
+        },
+        {
+            value: 100,
+            color: "#FDB45C",
+            highlight: "#FFC870",
+            label: "Yellow"
+        }
+    ]
 
     // Define default option for line chart
 	var options = {
@@ -65,11 +96,19 @@ $( document ).ready(function() {
 		animationEasing : "easeOutQuart",
 		onAnimationComplete : null
 	}
+
     function draw() {
-        $("#myChart").attr( 'width', $("#two").innerWidth()+'px' );
+        /* Yearly Birthdays */
+        $("#yearlyBirthdays").attr( 'width', $("#two").innerWidth()+'px' );
         //Get the context of the canvas element we want to select
-        var ctx = document.getElementById("myChart").getContext("2d");
-        myNewChart = new Chart(ctx).Line(data, options);
+        var ctxYearlyBirthdays = document.getElementById("yearlyBirthdays").getContext("2d");
+        yearlyBirthdays = new Chart(ctxYearlyBirthdays).Line(dataYearlyBirthdays, options);
+
+        /* Words used */
+        $("#wordsUsed").attr( 'width', $("#two").innerWidth()+'px' );
+        //Get the context of the canvas element we want to select
+        var ctxWordsUsed = document.getElementById("wordsUsed").getContext("2d");
+        wordsUsed = new Chart(ctxWordsUsed).Pie(dataWordsUsed, options);
     }
     $(window).on('load', function() { draw(); });
     $(window).resize( draw );
