@@ -14,9 +14,10 @@
         <script src="{% static "js/charts.js" %}"></script>
         <script>
             var years_charts_labels = {{ years_charts_labels }};
-            var years_charts_new = {{ years_charts_new}};
+            var years_charts_new = {{ years_charts_new }};
             var years_charts_same = {{ years_charts_same }};
             var years_charts_lost = {{ years_charts_lost }};
+            var years_charts_all = {{ years_charts_all }};
         </script>
         <link rel="stylesheet" href="{% static "css/skel.css" %}" />
         <link rel="stylesheet" href="{% static "css/style.css" %}" />
@@ -28,10 +29,10 @@
 
 		<!-- Header -->
 			<header id="header">
-				<a href="#" class="image avatar"><img src="images/avatar.jpg" alt="" /></a>
-				<h1><strong>I am Strata</strong>, a super simple<br />
-				responsive site template freebie<br />
-				crafted by <a href="http://html5up.net">HTML5 UP</a>.</h1>
+				<a href="#" class="image avatar"><img src="{{ picture }}" alt="" /></a>
+				<h1>Hello <strong>Stéphane Bruckert</strong>,<br />
+				today is your birthday<br />
+				enjoy these <a href="http://html5up.net">stats</a>.</h1>
 			</header>
 
 		<!-- Main -->
@@ -47,65 +48,58 @@
 						<ul class="actions">
 							<li><a href="#" class="button">Learn More</a></li>
 						</ul>
-                        <h1>Happy Birthday</h1>
-                        {% for key, value in diff.items %}
-                            <h2>{{key}}</h2>
-                            {% with new=value.new|length same=value.same|length lost=value.lost|length %}
-                            <h3>{{new|add:same}}</h3>
-                            <p>new: {{new}}</p>
-                            <p>same: {{same}}</p>
-                            <p>lost: {{lost}}</p>
-                            {% endwith %}
-                        {% endfor %}
 
-                        <canvas id="myChart"></canvas>
+                        <h1>Birthdays throughout the years</h1>
+                        <canvas id="yearlyBirthdays" height="400"></canvas>
+                        <h4>Table</h4>
+                        <h5>Default</h5>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>All</th>
+                                        <th>New</th>
+                                        <th>Same</th>
+                                        <th>Lost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for key, value in diff.items %}
+                                    {% with new=value.new|length same=value.same|length lost=value.lost|length %}
+                                    <tr>
+                                        <td>{{key}}</td>
+                                        <td>{{new|add:same}}</td>
+                                        <td>{{new}}</td>
+                                        <td>{{same}}</td>
+                                        <td>{{lost}}</td>
+                                        {% endwith %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td></td>
+                                        <td>100.00</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
 					</section>
-
-
 
 				<!-- Two -->
 					<section id="two">
-						<h2>Recent Work</h2>
-						<div class="row">
-							<article class="6u 12u$(3) work-item">
-								<a href="images/fulls/01.jpg" class="image fit thumb"><img src="images/thumbs/01.jpg" alt="" /></a>
-								<h3>Magna sed consequat tempus</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
-							</article>
-							<article class="6u$ 12u$(3) work-item">
-								<a href="images/fulls/02.jpg" class="image fit thumb"><img src="images/thumbs/02.jpg" alt="" /></a>
-								<h3>Ultricies lacinia interdum</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
-							</article>
-							<article class="6u 12u$(3) work-item">
-								<a href="images/fulls/03.jpg" class="image fit thumb"><img src="images/thumbs/03.jpg" alt="" /></a>
-								<h3>Tortor metus commodo</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
-							</article>
-							<article class="6u$ 12u$(3) work-item">
-								<a href="images/fulls/04.jpg" class="image fit thumb"><img src="images/thumbs/04.jpg" alt="" /></a>
-								<h3>Quam neque phasellus</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
-							</article>
-							<article class="6u 12u$(3) work-item">
-								<a href="images/fulls/05.jpg" class="image fit thumb"><img src="images/thumbs/05.jpg" alt="" /></a>
-								<h3>Nunc enim commodo aliquet</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
-							</article>
-							<article class="6u$ 12u$(3) work-item">
-								<a href="images/fulls/06.jpg" class="image fit thumb"><img src="images/thumbs/06.jpg" alt="" /></a>
-								<h3>Risus ornare lacinia</h3>
-								<p>Lorem ipsum dolor sit amet nisl sed nullam feugiat.</p>
-							</article>
-						</div>
-						<ul class="actions">
-							<li><a href="#" class="button">Full Portfolio</a></li>
-						</ul>
+						<h2>Wishes words</h2>
+                        <canvas id="wordsUsed"></canvas>
 					</section>
 
 				<!-- Three -->
 					<section id="three">
 						<h2>Get In Touch</h2>
+                        {% for i in longest_wishes %}
+                            <h5>{{ i.1.user }}</h5>
+							<blockquote>{{ i.1.message }}</blockquote>
+                        {% endfor %}
 						<p>Accumsan pellentesque commodo blandit enim arcu non at amet id arcu magna. Accumsan orci faucibus id eu lorem semper nunc nisi lorem vulputate lorem neque lorem ipsum dolor.</p>
 						<div class="row">
 							<div class="8u 12u$(2)">
@@ -142,7 +136,6 @@
 					</section>
 
 				<!-- Four -->
-				<!--
 					<section id="four">
 						<h2>Elements</h2>
 
@@ -459,8 +452,6 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 						</section>
 
 					</section>
-				-->
-
 			</div>
 
 		<!-- Footer -->
