@@ -9,7 +9,7 @@ from datetime import datetime
 
 class Found(Exception): pass
 
-graph = facebook.GraphAPI("CAACEdEose0cBACT6lHAMZCjnJh1B0b6zvxFXOrh2Y0CNnZAtQQSrizc7SbkudLUcrgb97fNmDgz2qS9ekAf4rnRmrAFLnEpkLZBpsvjPfRgrualEvg0MWZAGprf9SPJN4MLNrJAEc01BfJSTcehNI1a8f0AgyCFOVUyuEuWpGlYpJ9fFifDIF3ZBxqZBnywcSbZAUwM5qOogDsBIZAKI6Coi")
+graph = facebook.GraphAPI("CAACEdEose0cBAJ0HujOb2On8yhi9Ah88mL5ruYi68AsB3fQfFZAWLwysGSgjGXRXIAMhZB1ylgJwZBZCu9XZBSpF5vORKeKZBZBy4bD6a7WQBUaL3nvMn5aPeWA3XdGUbsb1YBOp64g0K8KOqZBzLWaqPl72DjVeOCArH1SWtXJA1SDPoonRqYieMR0JxgVB8IxeiaZBTG3fZAAPVntOi9gKBK")
 pp = pprint.PrettyPrinter(indent=2)
 
 
@@ -24,6 +24,11 @@ def index(request):
     wishesCounter = {}
     words = {}
     wishesByYear = {}
+
+    yearLabels = []
+    yearNews = []
+    yearSames = []
+    yearLosts = []
 
     try:
         while currentYear > 2004:
@@ -41,10 +46,24 @@ def index(request):
 
     wordsSorted = sorted(words.items(), key=operator.itemgetter(1))
 
+    lineChart = diffByYear(wishesByYear)
+    for key, value in lineChart.iteritems():
+        yearLabels.append(key)
+        yearNews.append(len(value["new"]))
+        yearSames.append(len(value["same"]))
+        yearLosts.append(len(value["lost"]))
+
+    pp.pprint(lineChart)
     pp.pprint(wordsSorted)
     pp.pprint(wishesByYear)
     pp.pprint(diffByYear(wishesByYear))
-    return render(request, 'index.html', {"words": wordsSorted, "wishes": wishesCounterSorted, "diff": diffByYear(wishesByYear)})
+
+    context = {"words": wordsSorted, "wishes": wishesCounterSorted, "diff": lineChart,
+               "years_charts_labels": yearLabels, "years_charts_new": yearNews, "years_charts_same": yearSames,
+               "years_charts_lost": yearLosts}
+
+    return render(request, 'index.html', context)
+
 
 def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wishesByYear):
     wishesByYear[currentYear] = {}
