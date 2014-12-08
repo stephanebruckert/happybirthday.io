@@ -10,7 +10,7 @@ from datetime import datetime
 class Found(Exception):
     pass
 
-graph = facebook.GraphAPI("CAACEdEose0cBAGPN3imVEM6XHZCEXAxiqhBHOjGZC0sQFadwxBShzy5JULV1mtOGNWpK5tXOOvp8ZCwzwPoVuwVpZAQGelK78TuwWZCXuBWfZBZAAjT38cEeNZCuhut7h1kdzZCcZA5Ge2Vxi1ZCJGFzGpYA72HZCmBZBCU0HvkDLRZAx5rK92IaVUZAoZBYb1ILkRxKzeVGL0aVUZCcOg78biNeMb9us")
+graph = facebook.GraphAPI("CAACEdEose0cBAEjA6s7hr1i5uRguU7LVHZBxO71p68nzXfmp40zKnVYVLXOnTo5BzZCFd1kBhr6fZC3uh34zDeBpp3oZALRgeZBeiV2ZCU2AQRAZAKZCNWZCmeIqyRuGZB0JGxisqOQWV4ZCxVJKqg7Vc9QBEtmvZBqIPUeFx2s9rJBNmIWpR4wqUxFT3HOGYTdUyvQV7ZBmMrw8dgkUbOLBtZAW5M")
 pp = pprint.PrettyPrinter(indent=2)
 
 friends = None
@@ -42,6 +42,8 @@ def index(request):
 
     # USER INFO
     picture = (graph.get_connections("me", "picture"))["url"]
+    friends = graph.get_connections("me", "friends", limit=1)
+    totalFriends = friends["summary"]["total_count"]
     profile = graph.get_object("me")
     birthday = profile["birthday"]
 
@@ -68,12 +70,14 @@ def index(request):
 
     # LineChart data
     lineChart = diffByYear(wishesByYear, friends)
+    all = 0
     for key, value in lineChart.iteritems():
         yearLabels.append(key)
         yearNews.append(len(value["new"]))
         yearSames.append(len(value["same"]))
         yearLosts.append(len(value["lost"]))
         yearAll.append(len(value["new"]) + len(value["same"]))
+        all += len(value["new"]) + len(value["same"])
 
     # WordChart data
     wordChart = getTopWords(words)
@@ -92,7 +96,7 @@ def index(request):
                "years_charts_labels": yearLabels, "years_charts_new": yearNews, "years_charts_same": yearSames,
                "years_charts_lost": yearLosts, "years_charts_all": yearAll, "picture": picture, "word_chart": wordChart,
                "longest_wishes": longestWishes, "friends_who_wished": friendsWhoWished, "word_chart_labels": wordLabels,
-               "word_chart_count": wordCount}
+               "word_chart_count": wordCount, "total_friends": totalFriends, "all": all}
     return render(request, 'index.html', context)
 
 
@@ -188,6 +192,7 @@ def getLongestWishes(wishesByYear, friends):
             longestWishes[post]["len"] = len(wishesByYear[year][post]["message"])
             longestWishes[post]["message"] = wishesByYear[year][post]["message"]
             longestWishes[post]["user"] = friends[wishesByYear[year][post]["user"]]
+            longestWishes[post]["year"] = year
     sortedLongestWishes = sorted(longestWishes.items(), key=operator.itemgetter(1), reverse=True)[:15]
     return sortedLongestWishes
 

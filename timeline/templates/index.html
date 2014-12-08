@@ -46,7 +46,7 @@
 							<h2>Birthday wishes mean a lot<br />when you are a good friend.</h2>
 						</header>
 
-						<p><strong>{{ friends_who_wished }}</strong> of your friends wished you an happy birthday at least once.</p>
+						<p>You were wished <strong>{{ all }}</strong> Happy Birthdays in total! <strong>{{ friends_who_wished }}</strong> among your <strong>{{ total_friends }}</strong> friends wished you an happy birthday at least once.</p>
 
                         <h1>Birthdays throughout the years</h1>
                         <canvas id="yearlyBirthdays" height="400"></canvas>
@@ -98,7 +98,7 @@
                     	<p>These are probably the most friendly birthday wishes you got.</p>
 
                         {% for i in longest_wishes %}
-                            <h5>{{ i.1.user }}</h5>
+                            <h5>{{ i.1.user }} — <strong>{{ i.1.year }}</strong></h5>
 							<blockquote>{{ i.1.message }}</blockquote>
                         {% endfor %}
 					</section>
