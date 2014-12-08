@@ -7,9 +7,10 @@ import operator
 
 from datetime import datetime
 
-class Found(Exception): pass
+class Found(Exception):
+    pass
 
-graph = facebook.GraphAPI("CAACEdEose0cBAJW3KKZCqZBTrIlWZAiB2JOym3e4CmYNsZCWhSLx5Pq3H5helqcMGYqHEGQhOyNcqoanhbgJm5uN5ciZAjhbZAL7Y7H1VHbIK7SgUWHf1ETZBYMoXG57ur4Q26PfDW0MyYaweKCl0UABTZBPJq1BufZCe0fpHxoZBEHEmpkl5upN8mHocBtsU1inqixZCw7vB19P2lD06RrZC1KX")
+graph = facebook.GraphAPI("CAACEdEose0cBAGPN3imVEM6XHZCEXAxiqhBHOjGZC0sQFadwxBShzy5JULV1mtOGNWpK5tXOOvp8ZCwzwPoVuwVpZAQGelK78TuwWZCXuBWfZBZAAjT38cEeNZCuhut7h1kdzZCcZA5Ge2Vxi1ZCJGFzGpYA72HZCmBZBCU0HvkDLRZAx5rK92IaVUZAoZBYb1ILkRxKzeVGL0aVUZCcOg78biNeMb9us")
 pp = pprint.PrettyPrinter(indent=2)
 
 friends = None
@@ -36,6 +37,9 @@ def index(request):
     yearLosts = []
     yearAll = []
 
+    wordLabels = []
+    wordCount = []
+
     # USER INFO
     picture = (graph.get_connections("me", "picture"))["url"]
     profile = graph.get_object("me")
@@ -54,18 +58,16 @@ def index(request):
             currentYear -= 1
     except KeyError:
         print "no more birthdays"
-    print(len(friends), "friends wished you x HB")
+    friendsWhoWished = len(friends)
 
     # WISHES COUNTER
     wishesCounterSorted = sorted(wishesCounter.items(), key=operator.itemgetter(1))
     for user, wishCount in enumerate(wishesCounterSorted):
         print friends[wishCount[0]], wishCount[1]
 
-    wordChart = getTopWords(words)
-    pp.pprint(wordChart)
 
+    # LineChart data
     lineChart = diffByYear(wishesByYear, friends)
-
     for key, value in lineChart.iteritems():
         yearLabels.append(key)
         yearNews.append(len(value["new"]))
@@ -73,12 +75,24 @@ def index(request):
         yearLosts.append(len(value["lost"]))
         yearAll.append(len(value["new"]) + len(value["same"]))
 
+    # WordChart data
+    wordChart = getTopWords(words)
+    pp.pprint(wordChart)
+    for key, value in wordChart:
+        print key.encode('utf-8')
+        print value
+        wordLabels.append(key.encode('utf-8'))
+        wordCount.append(value)
+
     longestWishes = getLongestWishes(wishesByYear, friends)
+
+    pp.pprint(wordChart)
 
     context = {"wishes": wishesCounterSorted, "diff": lineChart,
                "years_charts_labels": yearLabels, "years_charts_new": yearNews, "years_charts_same": yearSames,
-               "years_charts_lost": yearLosts, "years_charts_all": yearAll,"picture": picture, "word_chart": wordChart,
-               "longest_wishes": longestWishes}
+               "years_charts_lost": yearLosts, "years_charts_all": yearAll, "picture": picture, "word_chart": wordChart,
+               "longest_wishes": longestWishes, "friends_who_wished": friendsWhoWished, "word_chart_labels": wordLabels,
+               "word_chart_count": wordCount}
     return render(request, 'index.html', context)
 
 
@@ -116,6 +130,7 @@ def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wish
                     wishesCounter[posterId] += 1
                 else:
                     wishesCounter[posterId] = 1
+                # Check if last post of the day
                 if (postTimestamp <= birthdayTimestampStart):
                     # Must be at the end of the loop
                     raise Found
@@ -129,10 +144,12 @@ def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wish
 
 def sort_words(words, post_words):
     for word in post_words:
-        if word in words.keys():
-            words[word] += 1
-        else:
-            words[word] = 1
+        word = word.lower()
+        if len(word) > 2:
+            if word in words.keys():
+                words[word] += 1
+            else:
+                words[word] = 1
 
 def diffByYear(wishesByYear, friends):
     diffByYear = {}
@@ -164,7 +181,6 @@ def checkIfUserInArray(user, array):
     return False
 
 def getLongestWishes(wishesByYear, friends):
-    pp.pprint(friends)
     longestWishes = {}
     for year in wishesByYear:
         for post in wishesByYear[year]:
@@ -176,26 +192,5 @@ def getLongestWishes(wishesByYear, friends):
     return sortedLongestWishes
 
 def getTopWords(words):
-    wordsSorted = sorted(words.items(), key=operator.itemgetter(1), reverse=True)[:15]
-    wordChart = [
-        {
-            "value": 300,
-            "color":"#F7464A",
-            "highlight": "#FF5A5E",
-            "label": "Red"
-        },
-        {
-            "value": 50,
-            "color": "#46BFBD",
-            "highlight": "#5AD3D1",
-            "label": "Green"
-        },
-        {
-            "value": 100,
-            "color": "#FDB45C",
-            "highlight": "#FFC870",
-            "label": "Yellow"
-        }
-    ]
-    return wordChart
+    return sorted(words.items(), key=operator.itemgetter(1), reverse=True)[:20]
 

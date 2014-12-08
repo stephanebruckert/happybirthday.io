@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Strata by HTML5 UP</title>
+		<title>@hbd.io</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
@@ -18,6 +18,8 @@
             var years_charts_same = {{ years_charts_same }};
             var years_charts_lost = {{ years_charts_lost }};
             var years_charts_all = {{ years_charts_all }};
+            var word_chart_labels = {{ word_chart_labels|safe }};
+            var word_chart_count = {{ word_chart_count }};
         </script>
         <link rel="stylesheet" href="{% static "css/skel.css" %}" />
         <link rel="stylesheet" href="{% static "css/style.css" %}" />
@@ -32,7 +34,7 @@
 				<a href="#" class="image avatar"><img src="{{ picture }}" alt="" /></a>
 				<h1>Hello <strong>Stéphane Bruckert</strong>,<br />
 				today is your birthday<br />
-				enjoy these <a href="http://html5up.net">stats</a>.</h1>
+				enjoy these useless <a href="http://html5up.net">stats</a>.</h1>
 			</header>
 
 		<!-- Main -->
@@ -41,13 +43,10 @@
 				<!-- One -->
 					<section id="one">
 						<header class="major">
-							<h2>Ipsum lorem dolor aliquam ante commodo<br />
-							magna sed accumsan arcu neque.</h2>
+							<h2>Birthday wishes mean a lot<br />when you are a good friend.</h2>
 						</header>
-						<p>Accumsan orci faucibus id eu lorem semper. Eu ac iaculis ac nunc nisi lorem vulputate lorem neque cubilia ac in adipiscing in curae lobortis tortor primis integer massa adipiscing id nisi accumsan pellentesque commodo blandit enim arcu non at amet id arcu magna. Accumsan orci faucibus id eu lorem semper nunc nisi lorem vulputate lorem neque cubilia.</p>
-						<ul class="actions">
-							<li><a href="#" class="button">Learn More</a></li>
-						</ul>
+
+						<p><strong>{{ friends_who_wished }}</strong> of your friends wished you an happy birthday at least once.</p>
 
                         <h1>Birthdays throughout the years</h1>
                         <canvas id="yearlyBirthdays" height="400"></canvas>
@@ -89,50 +88,19 @@
 
 				<!-- Two -->
 					<section id="two">
-						<h2>Wishes words</h2>
-                        <canvas id="wordsUsed"></canvas>
+						<h2>Words your friends use to wish you an happy birthday</h2>
+                        <canvas id="wordsUsed" height="400"></canvas>
 					</section>
 
 				<!-- Three -->
 					<section id="three">
-						<h2>Get In Touch</h2>
+						<h2>The longest wishes</h2>
+                    	<p>These are probably the most friendly birthday wishes you got.</p>
+
                         {% for i in longest_wishes %}
                             <h5>{{ i.1.user }}</h5>
 							<blockquote>{{ i.1.message }}</blockquote>
                         {% endfor %}
-						<p>Accumsan pellentesque commodo blandit enim arcu non at amet id arcu magna. Accumsan orci faucibus id eu lorem semper nunc nisi lorem vulputate lorem neque lorem ipsum dolor.</p>
-						<div class="row">
-							<div class="8u 12u$(2)">
-								<form method="post" action="#">
-									<div class="row uniform 50%">
-										<div class="6u 12u$(3)"><input type="text" name="name" id="name" placeholder="Name" /></div>
-										<div class="6u$ 12u$(3)"><input type="email" name="email" id="email" placeholder="Email" /></div>
-										<div class="12u$"><textarea name="message" id="message" placeholder="Message" rows="4"></textarea></div>
-									</div>
-								</form>
-								<ul class="actions">
-									<li><input type="submit" value="Send Message" /></li>
-								</ul>
-							</div>
-							<div class="4u$ 12u$(2)">
-								<ul class="labeled-icons">
-									<li>
-										<h3 class="icon fa-home"><span class="label">Address</span></h3>
-										1234 Somewhere Rd.<br />
-										Nashville, TN 00000<br />
-										United States
-									</li>
-									<li>
-										<h3 class="icon fa-mobile"><span class="label">Phone</span></h3>
-										000-000-0000
-									</li>
-									<li>
-										<h3 class="icon fa-envelope-o"><span class="label">Email</span></h3>
-										<a href="#">hello@untitled.tld</a>
-									</li>
-								</ul>
-							</div>
-						</div>
 					</section>
 
 				<!-- Four -->

@@ -45,26 +45,19 @@ $( document ).ready(function() {
         ]
     };
 
-    var dataWordsUsed = [
-        {
-            value: 300,
-            color:"#F7464A",
-            highlight: "#FF5A5E",
-            label: "Red"
-        },
-        {
-            value: 50,
-            color: "#46BFBD",
-            highlight: "#5AD3D1",
-            label: "Green"
-        },
-        {
-            value: 100,
-            color: "#FDB45C",
-            highlight: "#FFC870",
-            label: "Yellow"
-        }
-    ]
+    var dataWordsUsed = {
+        labels: word_chart_labels,
+        datasets: [
+            {
+                label: "My First dataset",
+                fillColor: "rgba(39,204,119,0.5)",
+                strokeColor: "rgba(39,204,119,0.8)",
+                highlightFill: "rgba(39,204,119,0.75)",
+                highlightStroke: "rgba(39,204,119,1)",
+                data: word_chart_count
+            }
+        ]
+    };
 
     // Define default option for line chart
 	var options = {
@@ -108,7 +101,7 @@ $( document ).ready(function() {
         $("#wordsUsed").attr( 'width', $("#two").innerWidth()+'px' );
         //Get the context of the canvas element we want to select
         var ctxWordsUsed = document.getElementById("wordsUsed").getContext("2d");
-        wordsUsed = new Chart(ctxWordsUsed).Pie(dataWordsUsed, options);
+        wordsUsed = new Chart(ctxWordsUsed).Bar(dataWordsUsed, options);
     }
     $(window).on('load', function() { draw(); });
     $(window).resize( draw );
