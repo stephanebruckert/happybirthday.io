@@ -10,7 +10,7 @@ from datetime import datetime
 class Found(Exception):
     pass
 
-graph = facebook.GraphAPI("CAACEdEose0cBAEjA6s7hr1i5uRguU7LVHZBxO71p68nzXfmp40zKnVYVLXOnTo5BzZCFd1kBhr6fZC3uh34zDeBpp3oZALRgeZBeiV2ZCU2AQRAZAKZCNWZCmeIqyRuGZB0JGxisqOQWV4ZCxVJKqg7Vc9QBEtmvZBqIPUeFx2s9rJBNmIWpR4wqUxFT3HOGYTdUyvQV7ZBmMrw8dgkUbOLBtZAW5M")
+graph = facebook.GraphAPI("CAACEdEose0cBAGC048VzZATPsJstiHbuuQNVC6cxZCCMWrSZCv3kedSZBaGOzxFjvTZBZA8JFqDqgJJzKI4bJ8yAvybMmrrZCcwHnUSAUkdutp5ZB2h6dn28DsfP5VtbSSfwwTeaNHsZBvy3fSEq29l5t5do9GFf1rSCTilKTLA4y3amF6bXWqgabdfN3U1eqAIhPivcoxhnb7XX3WvipIeZAG")
 pp = pprint.PrettyPrinter(indent=2)
 
 friends = None
@@ -24,9 +24,9 @@ yearNews = None
 yearSames = None
 yearLosts = None
 
+
 def index(request):
     # INITS
-    friends = {}
     wishesCounter = {}
     words = {}
     wishesByYear = {}
@@ -55,18 +55,25 @@ def index(request):
 
     # LOOP YEARS
     try:
-        while currentYear > 2004:
+        while currentYear >= 2004:
+
             yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wishesByYear)
             currentYear -= 1
     except KeyError:
         print "no more birthdays"
+
     friendsWhoWished = len(friends)
 
     # WISHES COUNTER
-    wishesCounterSorted = sorted(wishesCounter.items(), key=operator.itemgetter(1))
+    wishesCounterSorted = sorted(wishesCounter.items(), key=operator.itemgetter(1), reverse=True)[:15]
+    wishesGrid = {}
     for user, wishCount in enumerate(wishesCounterSorted):
-        print friends[wishCount[0]], wishCount[1]
-
+        pic = graph.get_connections(wishCount[0], "picture", limit=1)
+        friendName = friends[wishCount[0]]
+        wishesGrid[friendName] = {}
+        wishesGrid[friendName]["years"] = wishCount[1]
+        wishesGrid[friendName]["url"] = pic["url"]
+    pp.pprint(wishesGrid)
 
     # LineChart data
     lineChart = diffByYear(wishesByYear, friends)
@@ -81,18 +88,13 @@ def index(request):
 
     # WordChart data
     wordChart = getTopWords(words)
-    pp.pprint(wordChart)
     for key, value in wordChart:
-        print key.encode('utf-8')
-        print value
         wordLabels.append(key.encode('utf-8'))
         wordCount.append(value)
 
     longestWishes = getLongestWishes(wishesByYear, friends)
 
-    pp.pprint(wordChart)
-
-    context = {"wishes": wishesCounterSorted, "diff": lineChart,
+    context = {"wishes_grid": wishesGrid, "diff": lineChart,
                "years_charts_labels": yearLabels, "years_charts_new": yearNews, "years_charts_same": yearSames,
                "years_charts_lost": yearLosts, "years_charts_all": yearAll, "picture": picture, "word_chart": wordChart,
                "longest_wishes": longestWishes, "friends_who_wished": friendsWhoWished, "word_chart_labels": wordLabels,
@@ -130,10 +132,13 @@ def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wish
 
                 posterId = post["from"]["id"]
                 friends[posterId] = post["from"]["name"]
-                if posterId in wishesCounter.keys():
-                    wishesCounter[posterId] += 1
-                else:
-                    wishesCounter[posterId] = 1
+                if posterId not in wishesCounter.keys():
+                    # Insert new friend
+                    wishesCounter[posterId] = []
+                if currentYear not in wishesCounter[posterId]:
+                    # Add wish year by friend
+                    wishesCounter[posterId].append(currentYear)
+
                 # Check if last post of the day
                 if (postTimestamp <= birthdayTimestampStart):
                     # Must be at the end of the loop
@@ -149,6 +154,7 @@ def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wish
 def sort_words(words, post_words):
     for word in post_words:
         word = word.lower()
+        word = ''.join(e for e in word if e.isalnum())
         if len(word) > 2:
             if word in words.keys():
                 words[word] += 1
@@ -162,7 +168,6 @@ def diffByYear(wishesByYear, friends):
         diffByYear[year]["new"] = {}
         diffByYear[year]["same"] = {}
         diffByYear[year]["lost"] = {}
-        pp.pprint(wishesByYear[year])
         for post in wishesByYear[year].values():
             if checkIfUserInArray(post["user"], wishesByYear[year-1]):
                 # Friend already posted last year
@@ -175,7 +180,6 @@ def diffByYear(wishesByYear, friends):
                 # Friend posted last year but not this year
                 if not checkIfUserInArray(post["user"], wishesByYear[year]):
                     diffByYear[year]["lost"][post["user"]] = friends[post["user"]]
-                    print friends[post["user"]]
     return diffByYear
 
 def checkIfUserInArray(user, array):

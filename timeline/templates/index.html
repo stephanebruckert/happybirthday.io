@@ -105,8 +105,31 @@
 
 				<!-- Four -->
 					<section id="four">
-						<h2>Elements</h2>
-
+						<h2>Wishes grid</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    {% for year in years_charts_labels %}
+                                    <th>{{ year }} </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, value in wishes_grid.items %}
+                                <tr>
+                                    <td>{{ key }}</td>
+                                    {% for year in years_charts_labels %}
+                                        {% for year2 in value.years %}
+                                            {% if year2 == year %}
+                                        <td>{{ year }}<img src="{{ value.url }}" width="30" height="30" /></td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
 						<section>
 							<h4>Text</h4>
 							<p>This is <b>bold</b> and this is <strong>strong</strong>. This is <i>italic</i> and this is <em>emphasized</em>.
