@@ -34,6 +34,7 @@ def index(request):
 
 def stats(request):
     # INITS
+    context = {}
     wishesCounter = {}
     words = {}
     wishesByYear = {}
@@ -100,13 +101,23 @@ def stats(request):
 
     longestWishes = getLongestWishes(wishesByYear, friends)
 
-    context = {"wishes_grid": wishesGrid, "diff": lineChart,
-               "years_charts_labels": yearLabels, "years_charts_new": yearNews, "years_charts_same": yearSames,
-               "years_charts_lost": yearLosts, "years_charts_all": yearAll, "picture": picture, "word_chart": wordChart,
-               "longest_wishes": longestWishes, "friends_who_wished": friendsWhoWished, "word_chart_labels": wordLabels,
-               "word_chart_count": wordCount, "total_friends": totalFriends, "all": all}
-    return render(request, 'stats.html', context)
-
+    context["wishes_grid"] = wishesGrid
+    context["diff"] = lineChart
+    context["years_charts_labels"] = yearLabels
+    context["years_charts_new"] = yearNews
+    context["years_charts_same"] = yearSames
+    context["years_charts_lost"] = yearLosts
+    context["years_charts_all"] = yearAll
+    context["picture"] = picture
+    context["word_chart"] = wordChart
+    context["longest_wishes"] = longestWishes
+    context["friends_who_wished"] = friendsWhoWished
+    context["word_chart_labels"] = wordLabels
+    context["word_chart_count"] = wordCount
+    context["total_friends"] = totalFriends
+    context["all"] = all
+    
+    return render(request, 'index.html', context)
 
 def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wishesByYear):
     wishesByYear[currentYear] = {}
