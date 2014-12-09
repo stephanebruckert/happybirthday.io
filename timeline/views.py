@@ -1,16 +1,20 @@
-from django.shortcuts import get_object_or_404, render
-import facebook
-import pprint
-import urlparse
-import time
-import operator
+from django.shortcuts import get_object_or_404, render, render_to_response
+from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
 
 from datetime import datetime
+
+import facebook
+import pprint
+import time
+import requests
+import operator
+import urlparse
 
 class Found(Exception):
     pass
 
-graph = facebook.GraphAPI("CAACEdEose0cBABZBbIVTIPsGWUOHHAGhZCFj5qBPHTZAc8dNNMZC08u9nIIq5YKoPYEMRynsGwMX9F57fZCnONZAxb6POk9lzTnLZB5037La47J4mGe6F1egCM4u324PAMRDaUXQWqQ4g36hfNWeUusDT6DpoRRmZANc8wtGNjJYNpf6zaxMaqRlwkRtZCLLt6ZAoZBlpmsNahJSZAFD2cvlbG5L")
+graph = facebook.GraphAPI("CAACEdEose0cBAHv6D0Hz8rK0DH8xD78sjSZBtOhvLAs7jRBuHrBqZCKr0VVSXl7YQt8eqrspVBTk4Y00nWS9WqMnOSRA999mYZA6mmRGQ3cjP3ZAZAeC0xrzv1AC7VrPi1YZAM1RyS02CA4kz0eTvWHZCscC4wnDBRTwG6dS47LezuYtDPRnkxyDbk6fxQjGKvTI0nb1cPFpxJSsZAMcue11")
 pp = pprint.PrettyPrinter(indent=2)
 
 friends = None
@@ -76,9 +80,6 @@ def stats(request):
         wishesGrid[friendName] = {}
         wishesGrid[friendName]["years"] = wishCount[1]
         wishesGrid[friendName]["url"] = pic["url"]
-        if len(wishesGrid[friendName]["years"]) >= 2:
-            print wishesGrid[friendName]["years"]
-    pp.pprint(wishesGrid)
 
     # LineChart data
     lineChart = diffByYear(wishesByYear, friends)
@@ -218,3 +219,28 @@ def getLongestWishes(wishesByYear, friends):
 def getTopWords(words):
     return sorted(words.items(), key=operator.itemgetter(1), reverse=True)[:20]
 
+###############
+
+def index(request):
+    return render_to_response("index.html", {"FACEBOOK_APP_ID": settings.FACEBOOK_APP_ID})
+
+#Login with the js sdk and backend queries with pyfb
+def facebook_javascript_login_sucess(request):
+    code = request.GET.get("code")
+    newUrl = 'https://graph.facebook.com/oauth/access_token?client_id=' \
+    +settings.FACEBOOK_APP_ID+'&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Ffacebook_javascript_login_sucess' \
+    +'&client_secret='+settings.FACEBOOK_SECRET_KEY+'&code='+code
+    r = requests.get(newUrl)
+    parsed = urlparse.parse_qsl(r.text)
+    access_token = str(parsed[0][1])
+    print(access_token)
+    graph = facebook.GraphAPI(access_token)
+
+    return _render_user(graph)
+
+def _render_user(graph):
+
+    me = graph.get_object("me")
+
+    welcome = "Welcome <b>%s</b>. Your Facebook login has been completed successfully!"
+    return HttpResponse(welcome % me["name"])

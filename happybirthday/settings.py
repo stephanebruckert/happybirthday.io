@@ -102,3 +102,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
+
+# Facebook connect
+FACEBOOK_APP_ID = '624394027683270'
+FACEBOOK_SECRET_KEY = '179911d559e8edf41a287484cbcd093b'
