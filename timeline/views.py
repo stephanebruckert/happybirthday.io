@@ -77,7 +77,6 @@ def stats(request):
     month = time.strftime("%m", conv)
     currentYear = datetime.now().year
 
-    print "1", request.session["access_token"]
     # LOOP YEARS
     try:
         while currentYear >= 2004:
@@ -134,7 +133,7 @@ def stats(request):
     context["total_friends"] = totalFriends
     context["all"] = all
 
-    return render(request, 'index.html', context)
+    return render(request, 'stats.html', context)
 
 def yearlyBirthdays(request, graph, currentYear, day, month, friends, wishesCounter, words, wishesByYear):
     wishesByYear[currentYear] = {}
@@ -156,10 +155,8 @@ def yearlyBirthdays(request, graph, currentYear, day, month, friends, wishesCoun
 
         # Last birthday timestamp
         until = birthdayTimestampEnd
-        print "2", request.session["access_token"]
         while True:
             feed = graph.get_connections("me", "feed", until=until, limit=1000)
-            pp.pprint(feed)
             i = 0
             for post in feed['data']:
                 #if post["type"] != "status":
