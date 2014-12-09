@@ -35,7 +35,7 @@ def index(request):
 def redirect(request):
     code = request.GET.get("code")
     newUrl = 'https://graph.facebook.com/oauth/access_token?client_id=' \
-    +settings.FACEBOOK_APP_ID+'&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fredirect' \
+    +settings.FACEBOOK_APP_ID+'&redirect_uri=http%3A%2F%2Fbirthdays.herokuapp.com%2Fredirect' \
     +'&client_secret='+settings.FACEBOOK_SECRET_KEY+'&code='+code
     r = requests.get(newUrl)
     parsed = urlparse.parse_qsl(r.text)
