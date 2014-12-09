@@ -116,12 +116,22 @@ def index(request):
 
 def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wishesByYear):
     wishesByYear[currentYear] = {}
+    UTC_14 = 14 * 60 * 60
+    UTC_12 = 12 * 60 * 60
     try:
         # Last birthday date
         birthdayDate = datetime(year=currentYear, month=int(month), day=int(day))
+        
+        # Timestamp beginning of the day
         birthdayTimestampStart = time.mktime(birthdayDate.timetuple())
+        # Day starts 14 hours earlier when in timezone UTC+14
+        birthdayTimestampStart -= UTC_14
+        
+        # Timestamp end of the day
         birthdayTimestampEnd = birthdayTimestampStart + 24 * 60 * 60
-
+        # Day ends 12 hours later when in timezone UTC-12
+        birthdayTimestampEnd += UTC_12
+        
         # Last birthday timestamp
         until = birthdayTimestampEnd
 
