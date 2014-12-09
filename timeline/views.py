@@ -10,7 +10,7 @@ from datetime import datetime
 class Found(Exception):
     pass
 
-graph = facebook.GraphAPI("CAACEdEose0cBAGC048VzZATPsJstiHbuuQNVC6cxZCCMWrSZCv3kedSZBaGOzxFjvTZBZA8JFqDqgJJzKI4bJ8yAvybMmrrZCcwHnUSAUkdutp5ZB2h6dn28DsfP5VtbSSfwwTeaNHsZBvy3fSEq29l5t5do9GFf1rSCTilKTLA4y3amF6bXWqgabdfN3U1eqAIhPivcoxhnb7XX3WvipIeZAG")
+graph = facebook.GraphAPI("CAACEdEose0cBABZBbIVTIPsGWUOHHAGhZCFj5qBPHTZAc8dNNMZC08u9nIIq5YKoPYEMRynsGwMX9F57fZCnONZAxb6POk9lzTnLZB5037La47J4mGe6F1egCM4u324PAMRDaUXQWqQ4g36hfNWeUusDT6DpoRRmZANc8wtGNjJYNpf6zaxMaqRlwkRtZCLLt6ZAoZBlpmsNahJSZAFD2cvlbG5L")
 pp = pprint.PrettyPrinter(indent=2)
 
 friends = None
@@ -73,6 +73,8 @@ def index(request):
         wishesGrid[friendName] = {}
         wishesGrid[friendName]["years"] = wishCount[1]
         wishesGrid[friendName]["url"] = pic["url"]
+        if len(wishesGrid[friendName]["years"]) >= 2:
+            print wishesGrid[friendName]["years"]
     pp.pprint(wishesGrid)
 
     # LineChart data
@@ -104,11 +106,21 @@ def index(request):
 
 def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wishesByYear):
     wishesByYear[currentYear] = {}
+    UTC_14 = 14 * 60 * 60
+    UTC_12 = 12 * 60 * 60
     try:
         # Last birthday date
         birthdayDate = datetime(year=currentYear, month=int(month), day=int(day))
+
+        # Timestamp beginning of the day
         birthdayTimestampStart = time.mktime(birthdayDate.timetuple())
+        # Day starts 14 hours earlier when in timezone UTC+14
+        birthdayTimestampStart -= UTC_14
+
+        # Timestamp end of the day
         birthdayTimestampEnd = birthdayTimestampStart + 24 * 60 * 60
+        # Day ends 12 hours later when in timezone UTC-12
+        birthdayTimestampEnd += UTC_12
 
         # Last birthday timestamp
         until = birthdayTimestampEnd

@@ -120,11 +120,13 @@
                                 <tr>
                                     <td>{{ key }}</td>
                                     {% for year in years_charts_labels %}
+                                        <td>
                                         {% for year2 in value.years %}
                                             {% if year2 == year %}
-                                        <td>{{ year }}<img src="{{ value.url }}" width="30" height="30" /></td>
+                                        <img src="{{ value.url }}" width="20" height="20" />
                                             {% endif %}
                                         {% endfor %}
+                                        </td>
                                     {% endfor %}
                                 </tr>
                                 {% endfor %}
