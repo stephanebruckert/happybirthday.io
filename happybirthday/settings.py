@@ -52,6 +52,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
 ROOT_URLCONF = 'happybirthday.urls'
 
 WSGI_APPLICATION = 'happybirthday.wsgi.application'

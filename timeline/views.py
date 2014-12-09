@@ -1,5 +1,7 @@
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+
 from django.conf import settings
 
 from datetime import datetime
@@ -14,7 +16,6 @@ import urlparse
 class Found(Exception):
     pass
 
-graph = facebook.GraphAPI("CAACEdEose0cBAHv6D0Hz8rK0DH8xD78sjSZBtOhvLAs7jRBuHrBqZCKr0VVSXl7YQt8eqrspVBTk4Y00nWS9WqMnOSRA999mYZA6mmRGQ3cjP3ZAZAeC0xrzv1AC7VrPi1YZAM1RyS02CA4kz0eTvWHZCscC4wnDBRTwG6dS47LezuYtDPRnkxyDbk6fxQjGKvTI0nb1cPFpxJSsZAMcue11")
 pp = pprint.PrettyPrinter(indent=2)
 
 friends = None
@@ -28,9 +29,19 @@ yearNews = None
 yearSames = None
 yearLosts = None
 
-
 def index(request):
-    return render(request, 'index.html', {})
+    return render_to_response("index.html", {"FACEBOOK_APP_ID": settings.FACEBOOK_APP_ID})
+
+def redirect(request):
+    code = request.GET.get("code")
+    newUrl = 'https://graph.facebook.com/oauth/access_token?client_id=' \
+    +settings.FACEBOOK_APP_ID+'&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fredirect' \
+    +'&client_secret='+settings.FACEBOOK_SECRET_KEY+'&code='+code
+    r = requests.get(newUrl)
+    parsed = urlparse.parse_qsl(r.text)
+    request.session["access_token"] = str(parsed[0][1])
+    return HttpResponseRedirect(reverse('stats'))
+
 
 def stats(request):
     # INITS
@@ -48,11 +59,16 @@ def stats(request):
     wordLabels = []
     wordCount = []
 
+    graph = facebook.GraphAPI(request.session["access_token"])
+
     # USER INFO
-    picture = (graph.get_connections("me", "picture"))["url"]
+    picture = graph.get_connections("me", "picture")["url"]
+    pp.pprint(picture)
     friends = graph.get_connections("me", "friends", limit=1)
+    pp.pprint(friends)
     totalFriends = friends["summary"]["total_count"]
     profile = graph.get_object("me")
+    pp.pprint(profile)
     birthday = profile["birthday"]
 
     # TIME INFO
@@ -61,11 +77,12 @@ def stats(request):
     month = time.strftime("%m", conv)
     currentYear = datetime.now().year
 
+    print "1", request.session["access_token"]
     # LOOP YEARS
     try:
         while currentYear >= 2004:
-
-            yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wishesByYear)
+            print currentYear
+            yearlyBirthdays(request, graph, currentYear, day, month, friends, wishesCounter, words, wishesByYear)
             currentYear -= 1
     except KeyError:
         print "no more birthdays"
@@ -116,10 +133,10 @@ def stats(request):
     context["word_chart_count"] = wordCount
     context["total_friends"] = totalFriends
     context["all"] = all
-    
+
     return render(request, 'index.html', context)
 
-def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wishesByYear):
+def yearlyBirthdays(request, graph, currentYear, day, month, friends, wishesCounter, words, wishesByYear):
     wishesByYear[currentYear] = {}
     UTC_14 = 14 * 60 * 60
     UTC_12 = 12 * 60 * 60
@@ -139,9 +156,10 @@ def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wish
 
         # Last birthday timestamp
         until = birthdayTimestampEnd
-
+        print "2", request.session["access_token"]
         while True:
             feed = graph.get_connections("me", "feed", until=until, limit=1000)
+            pp.pprint(feed)
             i = 0
             for post in feed['data']:
                 #if post["type"] != "status":
@@ -229,29 +247,3 @@ def getLongestWishes(wishesByYear, friends):
 
 def getTopWords(words):
     return sorted(words.items(), key=operator.itemgetter(1), reverse=True)[:20]
-
-###############
-
-def index(request):
-    return render_to_response("index.html", {"FACEBOOK_APP_ID": settings.FACEBOOK_APP_ID})
-
-#Login with the js sdk and backend queries with pyfb
-def facebook_javascript_login_sucess(request):
-    code = request.GET.get("code")
-    newUrl = 'https://graph.facebook.com/oauth/access_token?client_id=' \
-    +settings.FACEBOOK_APP_ID+'&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Ffacebook_javascript_login_sucess' \
-    +'&client_secret='+settings.FACEBOOK_SECRET_KEY+'&code='+code
-    r = requests.get(newUrl)
-    parsed = urlparse.parse_qsl(r.text)
-    access_token = str(parsed[0][1])
-    print(access_token)
-    graph = facebook.GraphAPI(access_token)
-
-    return _render_user(graph)
-
-def _render_user(graph):
-
-    me = graph.get_object("me")
-
-    welcome = "Welcome <b>%s</b>. Your Facebook login has been completed successfully!"
-    return HttpResponse(welcome % me["name"])
