@@ -26,6 +26,9 @@ yearLosts = None
 
 
 def index(request):
+    return render(request, 'index.html', {})
+
+def stats(request):
     # INITS
     wishesCounter = {}
     words = {}
@@ -101,7 +104,7 @@ def index(request):
                "years_charts_lost": yearLosts, "years_charts_all": yearAll, "picture": picture, "word_chart": wordChart,
                "longest_wishes": longestWishes, "friends_who_wished": friendsWhoWished, "word_chart_labels": wordLabels,
                "word_chart_count": wordCount, "total_friends": totalFriends, "all": all}
-    return render(request, 'index.html', context)
+    return render(request, 'stats.html', context)
 
 
 def yearlyBirthdays(currentYear, day, month, friends, wishesCounter, words, wishesByYear):
