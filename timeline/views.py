@@ -75,7 +75,7 @@ def stats(request):
     conv = time.strptime(birthday, "%m/%d/%Y")
     day = time.strftime("%d", conv)
     month = time.strftime("%m", conv)
-    currentYear = datetime.now().year
+    currentYear = 2009 #datetime.now().year
 
     # LOOP YEARS
     try:
