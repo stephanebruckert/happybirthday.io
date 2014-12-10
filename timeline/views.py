@@ -40,100 +40,105 @@ def redirect(request):
     r = requests.get(newUrl)
     parsed = urlparse.parse_qsl(r.text)
     request.session["access_token"] = str(parsed[0][1])
+    request.session["over"] = "no"
+
     return HttpResponseRedirect(reverse('stats'))
 
 
 def stats(request):
-    # INITS
-    context = {}
-    wishesCounter = {}
-    words = {}
-    wishesByYear = {}
+    if (request.session["over"] == "no"):
+        # INITS
+        context = {}
+        wishesCounter = {}
+        words = {}
+        wishesByYear = {}
 
-    yearLabels = []
-    yearNews = []
-    yearSames = []
-    yearLosts = []
-    yearAll = []
+        yearLabels = []
+        yearNews = []
+        yearSames = []
+        yearLosts = []
+        yearAll = []
 
-    wordLabels = []
-    wordCount = []
+        wordLabels = []
+        wordCount = []
 
-    graph = facebook.GraphAPI(request.session["access_token"])
+        graph = facebook.GraphAPI(request.session["access_token"])
 
-    # USER INFO
-    picture = graph.get_connections("me", "picture")["url"]
-    pp.pprint(picture)
-    friends = graph.get_connections("me", "friends", limit=1)
-    pp.pprint(friends)
-    totalFriends = friends["summary"]["total_count"]
-    profile = graph.get_object("me")
-    pp.pprint(profile)
-    birthday = profile["birthday"]
+        # USER INFO
+        picture = graph.get_connections("me", "picture")["url"]
+        pp.pprint(picture)
+        friends = graph.get_connections("me", "friends", limit=1)
+        pp.pprint(friends)
+        totalFriends = friends["summary"]["total_count"]
+        profile = graph.get_object("me")
+        pp.pprint(profile)
+        birthday = profile["birthday"]
 
-    # TIME INFO
-    conv = time.strptime(birthday, "%m/%d/%Y")
-    day = time.strftime("%d", conv)
-    month = time.strftime("%m", conv)
-    currentYear = 2009 #datetime.now().year
+        # TIME INFO
+        conv = time.strptime(birthday, "%m/%d/%Y")
+        day = time.strftime("%d", conv)
+        month = time.strftime("%m", conv)
+        currentYear = 2009 #datetime.now().year
 
-    # LOOP YEARS
-    try:
-        while currentYear >= 2004:
-            print currentYear
-            yearlyBirthdays(request, graph, currentYear, day, month, friends, wishesCounter, words, wishesByYear)
-            currentYear -= 1
-    except KeyError:
-        print "no more birthdays"
+        # LOOP YEARS
+        try:
+            while currentYear >= 2004:
+                print currentYear
+                yearlyBirthdays(request, graph, currentYear, day, month, friends, wishesCounter, words, wishesByYear)
+                currentYear -= 1
+        except KeyError:
+            print "no more birthdays"
 
-    friendsWhoWished = len(friends)
+        friendsWhoWished = len(friends)
 
-    # WISHES COUNTER
-    wishesCounterSorted = sorted(wishesCounter.items(), key=operator.itemgetter(1), reverse=True)[:15]
-    wishesGrid = {}
-    for user, wishCount in enumerate(wishesCounterSorted):
-        pic = graph.get_connections(wishCount[0], "picture", limit=1)
-        friendName = friends[wishCount[0]]
-        wishesGrid[friendName] = {}
-        wishesGrid[friendName]["years"] = wishCount[1]
-        wishesGrid[friendName]["url"] = pic["url"]
+        # WISHES COUNTER
+        wishesCounterSorted = sorted(wishesCounter.items(), key=operator.itemgetter(1), reverse=True)[:15]
+        wishesGrid = {}
+        for user, wishCount in enumerate(wishesCounterSorted):
+            pic = graph.get_connections(wishCount[0], "picture", limit=1)
+            friendName = friends[wishCount[0]]
+            wishesGrid[friendName] = {}
+            wishesGrid[friendName]["years"] = wishCount[1]
+            wishesGrid[friendName]["url"] = pic["url"]
 
-    # LineChart data
-    lineChart = diffByYear(wishesByYear, friends)
-    all = 0
-    for key, value in lineChart.iteritems():
-        yearLabels.append(key)
-        yearNews.append(len(value["new"]))
-        yearSames.append(len(value["same"]))
-        yearLosts.append(len(value["lost"]))
-        yearAll.append(len(value["new"]) + len(value["same"]))
-        all += len(value["new"]) + len(value["same"])
+        # LineChart data
+        lineChart = diffByYear(wishesByYear, friends)
+        all = 0
+        for key, value in lineChart.iteritems():
+            yearLabels.append(key)
+            yearNews.append(len(value["new"]))
+            yearSames.append(len(value["same"]))
+            yearLosts.append(len(value["lost"]))
+            yearAll.append(len(value["new"]) + len(value["same"]))
+            all += len(value["new"]) + len(value["same"])
 
-    # WordChart data
-    wordChart = getTopWords(words)
-    for key, value in wordChart:
-        wordLabels.append(key.encode('utf-8'))
-        wordCount.append(value)
+        # WordChart data
+        wordChart = getTopWords(words)
+        for key, value in wordChart:
+            wordLabels.append(key.encode('utf-8'))
+            wordCount.append(value)
 
-    longestWishes = getLongestWishes(wishesByYear, friends)
+        longestWishes = getLongestWishes(wishesByYear, friends)
 
-    context["wishes_grid"] = wishesGrid
-    context["diff"] = lineChart
-    context["years_charts_labels"] = yearLabels
-    context["years_charts_new"] = yearNews
-    context["years_charts_same"] = yearSames
-    context["years_charts_lost"] = yearLosts
-    context["years_charts_all"] = yearAll
-    context["picture"] = picture
-    context["word_chart"] = wordChart
-    context["longest_wishes"] = longestWishes
-    context["friends_who_wished"] = friendsWhoWished
-    context["word_chart_labels"] = wordLabels
-    context["word_chart_count"] = wordCount
-    context["total_friends"] = totalFriends
-    context["all"] = all
+        context["wishes_grid"] = wishesGrid
+        context["diff"] = lineChart
+        context["years_charts_labels"] = yearLabels
+        context["years_charts_new"] = yearNews
+        context["years_charts_same"] = yearSames
+        context["years_charts_lost"] = yearLosts
+        context["years_charts_all"] = yearAll
+        context["picture"] = picture
+        context["word_chart"] = wordChart
+        context["longest_wishes"] = longestWishes
+        context["friends_who_wished"] = friendsWhoWished
+        context["word_chart_labels"] = wordLabels
+        context["word_chart_count"] = wordCount
+        context["total_friends"] = totalFriends
+        context["all"] = all
+        
+        request.session["over"] = "yes"
 
-    return render(request, 'stats.html', context)
+        return render(request, 'stats.html', context)
 
 def yearlyBirthdays(request, graph, currentYear, day, month, friends, wishesCounter, words, wishesByYear):
     wishesByYear[currentYear] = {}
