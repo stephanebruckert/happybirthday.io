@@ -33,8 +33,8 @@
 			<header id="header">
 				<a href="#" class="image avatar"><img src="{{ picture }}" alt="" /></a>
 				<h1>Hello <strong>Stéphane Bruckert</strong>,<br />
-				today is your birthday<br />
-				enjoy these useless <a href="http://html5up.net">stats</a>.</h1>
+				today is your birthday.<br />
+				We wish you great <a href="https://bitbucket.org/yesyoucan/socialcharts">statistics</a>.</h1>
 			</header>
 
 		<!-- Main -->
@@ -48,10 +48,8 @@
 
 						<p>You were wished <strong>{{ all }}</strong> Happy Birthdays in total! <strong>{{ friends_who_wished }}</strong> among your <strong>{{ total_friends }}</strong> friends wished you an happy birthday at least once.</p>
 
-                        <h1>Birthdays throughout the years</h1>
+                        <h2>Birthdays throughout the years</h2>
                         <canvas id="yearlyBirthdays" height="400"></canvas>
-                        <h4>Table</h4>
-                        <h5>Default</h5>
                         <div class="table-wrapper">
                             <table>
                                 <thead>
@@ -105,7 +103,7 @@
 
 				<!-- Four -->
 					<section id="four">
-						<h2>Wishes grid</h2>
+						<h2>Your closest friends</h2>
                         <table>
                             <thead>
                                 <tr>
@@ -123,7 +121,7 @@
                                         <td>
                                         {% for year2 in value.years %}
                                             {% if year2 == year %}
-                                        <img src="{{ value.url }}" width="20" height="20" />
+                                            <center><img style="vertical-align:middle;margin-bottom:4px;" src="{{ value.url }}" width="20" height="20" /></center>
                                             {% endif %}
                                         {% endfor %}
                                         </td>
@@ -139,10 +137,10 @@
 		<!-- Footer -->
 			<footer id="footer">
 				<ul class="icons">
-					<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-					<li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
-					<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
-					<li><a href="#" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
+					<li><a href="https://twitter.com/stephanebru" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+					<li><a href="https://github.com/stephanebruckert" class="icon fa-github"><span class="label">Github</span></a></li>
+					<li><a href="https://dribbble.com/stephanebruckert/likes" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+					<li><a href="mailto:contact[at]stephanebruckert.com" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
 				</ul>
 				<ul class="copyright">
 					<li>&copy; SocialCharts</li><li>2014</li>

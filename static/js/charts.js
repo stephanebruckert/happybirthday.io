@@ -3,7 +3,7 @@ $( document ).ready(function() {
         labels: years_charts_labels,
         datasets: [
             {
-                label: "My First dataset",
+                label: "Same (wished last year)",
                 fillColor: "rgba(142,168,191,0.2)",
                 strokeColor: "rgba(142,168,191,1)",
                 pointColor: "rgba(142,168,191,1)",
@@ -13,7 +13,7 @@ $( document ).ready(function() {
                 data: years_charts_same
             },
             {
-                label: "My Second dataset",
+                label: "New (didn't wish last year)",
                 fillColor: "rgba(39,204,119,0.2)",
                 strokeColor: "rgba(39,204,119,1)",
                 pointColor: "rgba(39,204,119,1)",
@@ -23,7 +23,7 @@ $( document ).ready(function() {
                 data: years_charts_new
             },
             {
-                label: "My Third dataset",
+                label: "Lost (wished last year but not this year)",
                 fillColor: "rgba(242,87,87,0.2)",
                 strokeColor: "rgba(242,87,87,1)",
                 pointColor: "rgba(242,87,87,1)",
@@ -33,7 +33,7 @@ $( document ).ready(function() {
                 data: years_charts_lost
             },
             {
-                label: "All",
+                label: "Total wishes",
                 fillColor: "rgba(122,87,87,0.2)",
                 strokeColor: "rgba(122,87,87,1)",
                 pointColor: "rgba(122,87,87,1)",
@@ -96,6 +96,7 @@ $( document ).ready(function() {
         //Get the context of the canvas element we want to select
         var ctxYearlyBirthdays = document.getElementById("yearlyBirthdays").getContext("2d");
         yearlyBirthdays = new Chart(ctxYearlyBirthdays).Line(dataYearlyBirthdays, options);
+        yearlyBirthdays.generateLegend();
 
         /* Words used */
         $("#wordsUsed").attr( 'width', $("#two").innerWidth()+'px' );
