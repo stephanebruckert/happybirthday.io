@@ -40,7 +40,8 @@ $( document ).ready(function() {
                 pointStrokeColor: "#fff",
                 pointHighlightFill: "#fff",
                 pointHighlightStroke: "rgba(122,87,87,1)",
-                data: years_charts_all
+                data: years_charts_all,
+                segmentStrokeWidth: "5"
             }
         ]
     };
@@ -87,7 +88,8 @@ $( document ).ready(function() {
 		animation : true,
 		animationSteps : 60,
 		animationEasing : "easeOutQuart",
-		onAnimationComplete : null
+		onAnimationComplete : null,
+        legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
 	}
 
     function draw() {
