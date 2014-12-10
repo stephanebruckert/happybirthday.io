@@ -135,7 +135,7 @@ def stats(request):
         context["word_chart_count"] = wordCount
         context["total_friends"] = totalFriends
         context["all"] = all
-        
+
         request.session["over"] = "yes"
 
         return render(request, 'stats.html', context)
