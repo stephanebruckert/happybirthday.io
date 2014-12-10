@@ -27,7 +27,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [".herokuapp.com", ".birthdays.herokuapp.com"]
 
 
 # Application definition
