@@ -1,2 +1,2 @@
-web: gunicorn happybirthday.wsgi --log-file -
+web: gunicorn happybirthday.wsgi --log-file - --timeout 100
 
