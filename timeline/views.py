@@ -66,12 +66,9 @@ def stats(request):
 
         # USER INFO
         picture = graph.get_connections("me", "picture")["url"]
-        pp.pprint(picture)
         friends = graph.get_connections("me", "friends", limit=1)
-        pp.pprint(friends)
         totalFriends = friends["summary"]["total_count"]
         profile = graph.get_object("me")
-        pp.pprint(profile)
         birthday = profile["birthday"]
 
         # TIME INFO
@@ -135,6 +132,7 @@ def stats(request):
         context["word_chart_count"] = wordCount
         context["total_friends"] = totalFriends
         context["all"] = all
+        context["name"] = profile["name"]
 
         request.session["over"] = "yes"
 
